@@ -1,0 +1,17 @@
+---
+- name: Learing variables
+  hosts: all
+  become: yes
+    #vars:
+    #USRNM: adhi
+    #COMM: Varaible from Playbook
+  tasks:
+    - name: Creating user
+      ansible.builtin.user:
+        name: "{{USRNM}}"
+        comment: "{{COMM}}"
+      register: usrout
+    - debug: 
+        var: usrout.name
+    - debug:
+        var: usrout.comment

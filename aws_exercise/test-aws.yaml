@@ -1,0 +1,33 @@
+- hosts: localhost
+  gather_facts: False
+  tasks:
+    - name: create a new ec2 key pair, returns generated private key
+      ec2_key:
+         name: sample
+         region: us-east-1
+      register: keyout
+
+        #  - name: Print the key
+        # debug:
+        # var: keyout
+
+    - name: Copy the Key
+      copy:
+        content: "{{keyout.key.private_key}}"
+        dest: ./sample.pem
+      when: keyout.changed == True
+
+    - name: start an instance with a public IP address
+      amazon.aws.ec2_instance:
+        name: "rare0711"
+        key_name: "sample"
+          #vpc_subnet_id: subnet-0f30cd335dafd6172
+        instance_type: t2.micro
+        security_group: default
+        network:
+          assign_public_ip: true
+        image_id: ami-0e731c8a588258d0d
+        exact_count: 1
+        tags:
+           Environment: Testing
+

@@ -1,0 +1,7 @@
+---
+- name: File Module
+  hosts: all
+  become: yes
+  roles:
+    - post-install 
+

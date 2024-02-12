@@ -1,0 +1,17 @@
+---
+- name: Fact Varibales
+  hosts: all
+    #gather_facts: False
+  tasks:
+    - name: Print OS
+      debug:
+        var: ansible_os_family
+    - name: Printing Dictionary Varibales
+      debug:
+        var: ansible_date_time.date 
+    - name: Printing List variables
+      debug:
+        var: ansible_processor[2]
+    - name: Nesting List
+      debug:
+        var: ansible_python.version_info[3]

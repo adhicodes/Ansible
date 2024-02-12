@@ -1,0 +1,36 @@
+---
+# tasks file for post-install
+- name: Banner file
+  copy:
+    content: "This Server is managed by Ansible. Please dont do any changes"
+    dest: /etc/motd
+
+- name: Creating a folder
+  file:
+    path: "{{mydir}}"
+    state: directory
+
+- name: Deploy Chrony Configuration in CentoS
+  template: 
+    src: ntpconf_centos.j2
+    dest: /etc/chrony.conf
+    backup: yes
+  when: ansible_distribution == "CentOS"
+  notify:
+    - Restarting Chrony Service
+
+- name: Deploy NTP Configuration in ubuntu
+  template:
+    src: ntpconf_ubuntu.j2
+    dest: /etc/ntp.conf
+    backup: yes
+  when: ansible_distribution == "Ubuntu"
+  notify:
+    - Restarting ntp Service
+
+- name: Dumping File
+  copy:
+    src: myfile.txt
+    dest: /tmp/files/myfile.txt
+
+

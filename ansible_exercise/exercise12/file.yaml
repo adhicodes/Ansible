@@ -1,0 +1,49 @@
+---
+- name: File Module
+  hosts: all
+  become: yes
+  tasks:
+    - name: Banner file
+      copy:
+        content: "This Server is managed by Ansible. Please dont do any changes"
+        dest: /etc/motd
+
+    - name: Creating a folder
+      file:
+        path: /tmp/test
+        state: directory
+
+    - name: Deploy Chrony Configuration in CentoS
+      template: 
+        src: templates/ntpconf_centos
+        dest: /etc/chrony.conf
+        backup: yes
+      when: ansible_distribution == "CentOS"
+      notify:
+        - Restarting Chrony Service
+
+    - name: Deploy NTP Configuration in ubuntu
+      template:
+        src: templates/ntpconf_ubuntu
+        dest: /etc/ntp.conf
+        backup: yes
+      when: ansible_distribution == "Ubuntu"
+      notify:
+        - Restarting ntp Service
+          
+  handlers:        
+    - name: Restarting Chrony Service
+      service:
+        name: chronyd
+        state: restarted
+        enabled: yes
+      when: ansible_distribution == "CentOS"
+
+    - name: Restarting ntp Service
+      service:
+        name: ntp
+        state: restarted
+        enabled: yes
+      when: ansible_distribution == "Ubuntu"
+    
+
